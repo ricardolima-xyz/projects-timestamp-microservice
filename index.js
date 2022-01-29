@@ -13,14 +13,16 @@ app.get('/', function (req, res) {
 
 app.get('/api', function(req, res) {
     let date = new Date();
-    res.json({unix: date.getTime(), utc: date});
+    res.json({unix: date.getTime(), utc: date.toUTCString()});
 });
 
 app.get('/api/:date', function(req, res) {
     try {
-        let timestamp = Date.parse(req.params.date);
-        if (isNaN(timestamp)) throw "Invalid Date";
-        res.json({unix: timestamp, utc: timestamp});
+        let date = isNaN(Number(req.params.date)) ?
+            new Date(req.params.date):
+            new Date(Number.parseInt(req.params.date));
+        if (isNaN(date.getTime())) throw "Invalid Date";
+        res.json({unix: date.getTime(), utc: date.toUTCString()});
     } catch (error) {
         res.json({ error : error });
     }
